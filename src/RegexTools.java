@@ -49,65 +49,79 @@ public class RegexTools {
             "девятьсот"
     };
 
+    //выражение для поиска трехзначных чисел:
+    private static String expression;
+
+    //скомпилированное выражение для поиска трехзначных чисел:
+    private static Pattern pattern;
+
+    public RegexTools(){
+        if(expression == null) {
+            //готовим выражение для поиска трехзначных чисел:
+            // ((сотни)?(десятки)?(единицы)) | ((сотни)?(10-19)) | ((сотни)?(десятки)) | (сотни)
+            expression = "((";
+            for (String s : hundreds) {
+                expression += ("(\\b" + s + "\\b\\s*)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += ")?(";
+            for (String s : tens) {
+                expression += ("(\\b" + s + "\\b\\s*)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += ")?(";
+            for (String s : ones) {
+                expression += ("(\\b" + s + "\\b)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += "))|((";
+            for (String s : hundreds) {
+                expression += ("(\\b" + s + "\\b\\s*)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += ")?(";
+            for (String s : elementaries) {
+                expression += ("(\\b" + s + "\\b)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += "))|((";
+            for (String s : hundreds) {
+                expression += ("(\\b" + s + "\\b\\s*)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += ")?(";
+            for (String s : tens) {
+                expression += ("(\\b" + s + "\\b)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += "))|(";
+            for (String s : hundreds) {
+                expression += ("(\\b" + s + "\\b)" + '|');
+            }
+            expression = expression.substring(0, expression.length() - 1); //убираем символ '|' в конце
+            expression += ")";
+
+            //компилируем сформированное выражение
+            pattern = Pattern.compile(expression);
+        }
+
+    }
+
     /*
     Ищет числа от 1 до 999, записанные прописью, и заменяет их на цифровое представление.
      */
     public String replaceWordsToNumbers(String input) {
-        //готовим выражение для поиска трехзначных чисел:
-        // ((сотни)?(десятки)?(единицы)) | ((сотни)?(10-19)) | ((сотни)?(десятки)) | (сотни)
-        String expression = "((";
-        for(String s : hundreds) {
-            expression += ( "(\\b" + s + "\\b\\s*)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += ")?(";
-        for(String s : tens) {
-            expression += ( "(\\b" + s + "\\b\\s*)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += ")?(";
-        for(String s : ones) {
-            expression += ( "(\\b" + s + "\\b)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += "))|((";
-        for(String s : hundreds) {
-            expression += ( "(\\b" + s + "\\b\\s*)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += ")?(";
-        for(String s : elementaries) {
-            expression += ( "(\\b" + s + "\\b)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += "))|((";
-        for(String s : hundreds) {
-            expression += ( "(\\b" + s + "\\b\\s*)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += ")?(";
-        for(String s : tens) {
-            expression += ( "(\\b" + s + "\\b)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += "))|(";
-        for(String s : hundreds) {
-            expression += ( "(\\b" + s + "\\b)" + '|' );
-        }
-        expression = expression.substring(0, expression.length()-1); //убираем символ '|' в конце
-        expression += ")";
 
-        //используем сформированное выражение
-        Pattern pattern = Pattern.compile(expression);
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
             String group = matcher.group(); //строка, содержащая найденное число
 
-              //debug calls
+            /*  //debug calls
             System.out.println("found: [" + group + "]");
             System.out.println("start position: " + matcher.start());
             System.out.println("end position: " + matcher.end());
             System.out.println();
+             */
 
             int num = toInteger(group); //конвертируем строку с числом в int
             input = input.replaceFirst(group, Integer.toString(num)); //преобразуем в строку и подставляем в результат
@@ -153,8 +167,9 @@ public class RegexTools {
 
     public static void main(String args[]){
         RegexTools tools = new RegexTools();
-
-        System.out.println(tools.replaceWordsToNumbers("пятьсот семь lol сорок azaza  шестьсот восемьдесят четыре qwerty девятьсот сорок шесть"));
-        //System.out.println(tools.toInteger("триста сорок девять"));
+        String result = tools.replaceWordsToNumbers(
+                "пятьсот семь lol сорок azaza  шестьсот восемьдесят четыре qwerty девятьсот сорок шесть"
+        );
+        System.out.println(result);
     }
 }
