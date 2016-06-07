@@ -109,10 +109,46 @@ public class RegexTools {
             System.out.println("end position: " + matcher.end());
             System.out.println();
 
-            //TODO: написать метод для конвертации строки в число
+            int num = toInteger(group); //конвертируем строку с числом в int
+            input = input.replaceFirst(group, Integer.toString(num)); //преобразуем в строку и подставляем в результат
 
         }
         return input;
+    }
+
+    /*
+    Преобразует число, записанное прописью, в числовой формат.
+    Работает для чисел от 1 до 999.
+    ВАЖНО: валидность входных данных не проверяется!
+     */
+    private int toInteger(String input){
+        input = input.trim();
+        int number = -1;
+        for(int i = 0; i < hundreds.length; i++){
+            if ( input.matches("\\b" + hundreds[i] + "\\b.*") ){
+                number += (i+1)*100;
+            }
+        }
+        for(int j = 0; j < elementaries.length; j++){
+            if ( input.matches(".*\\b" + elementaries[j] + "\\b") ){
+                number += (j+10);
+            }
+        }
+        for(int j = 0; j < tens.length; j++){
+            if ( input.matches(".*\\b" + tens[j] + "\\b.*") ){
+                number += (j+2)*10;
+            }
+        }
+        for(int j = 0; j < ones.length; j++){
+            if ( input.matches(".*\\b" + ones[j] + "\\b") ){
+                number += (j+1);
+            }
+        }
+
+        if (number == -1)
+            return -1;
+        else
+            return ++number;
     }
 
 }
