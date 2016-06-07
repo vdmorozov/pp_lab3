@@ -151,4 +151,10 @@ public class RegexTools {
             return ++number;
     }
 
+    public static void main(String args[]){
+        RegexTools tools = new RegexTools();
+
+        System.out.println(tools.replaceWordsToNumbers("пятьсот семь lol сорок azaza  шестьсот восемьдесят четыре qwerty девятьсот сорок шесть"));
+        //System.out.println(tools.toInteger("триста сорок девять"));
+    }
 }
